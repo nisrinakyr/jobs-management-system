@@ -1,0 +1,102 @@
+# ==============================================================
+# CI Pipeline — Jobs Management System
+# Kelompok 13 · PSO B
+#
+# Berjalan saat:
+#   - Pull Request ke develop atau main
+#   - Push ke develop atau main
+# ==============================================================
+
+name: CI Pipeline
+
+on:
+  pull_request:
+    branches: [ "main", "develop" ]
+  push:
+    branches: [ "main", "develop" ]
+
+jobs:
+  lint:
+    name: "🎨 Code Style Check"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout kode
+        uses: actions/checkout@v4
+      - name: Setup PHP 8.2
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          tools: composer:v2
+      - name: Cache Composer
+        uses: actions/cache@v4
+        with:
+          path: ~/.composer/cache
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+      - name: Install dependencies
+        run: composer install --no-interaction --prefer-dist --no-progress
+      - name: Check code style
+        run: |
+          if [ -f "vendor/bin/php-cs-fixer" ]; then
+            vendor/bin/php-cs-fixer fix --dry-run --diff
+          else
+            echo "ℹ️ PHP CS Fixer belum terinstall, melewati lint check."
+          fi
+
+  test:
+    name: "🧪 Run Tests (PHP ${{ matrix.php-version }})"
+    runs-on: ubuntu-latest
+    needs: lint
+    strategy:
+      fail-fast: false
+      matrix:
+        php-version: ['8.2', '8.3']
+    steps:
+      - name: Checkout kode
+        uses: actions/checkout@v4
+      - name: Setup PHP ${{ matrix.php-version }}
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          extensions: pdo, pdo_sqlite, sqlite3, mbstring, xml, curl, tokenizer, bcmath
+          coverage: none
+      - name: Cache Composer
+        uses: actions/cache@v4
+        with:
+          path: ~/.composer/cache
+          key: ${{ runner.os }}-php${{ matrix.php-version }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-php${{ matrix.php-version }}-composer-
+      - name: Install dependencies
+        run: composer install --no-interaction --prefer-dist --no-progress
+      - name: Buat .env dari .env.example
+        run: cp .env.example .env
+      - name: Generate application key
+        run: php artisan key:generate
+      - name: Jalankan migrasi (SQLite in-memory)
+        run: php artisan migrate --force
+        env:
+          DB_CONNECTION: sqlite
+          DB_DATABASE: ":memory:"
+      - name: Jalankan semua tests
+        run: php artisan test --ansi
+        env:
+          APP_ENV: testing
+          DB_CONNECTION: sqlite
+          DB_DATABASE: ":memory:"
+
+  security:
+    name: "🔒 Security Audit"
+    runs-on: ubuntu-latest
+    needs: lint
+    steps:
+      - name: Checkout kode
+        uses: actions/checkout@v4
+      - name: Setup PHP 8.2
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          tools: composer:v2
+      - name: Install dependencies
+        run: composer install --no-interaction --prefer-dist --no-progress
+      - name: Jalankan composer audit
+        run: composer audit

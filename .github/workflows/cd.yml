@@ -1,0 +1,112 @@
+# ==============================================================
+# CD Pipeline — Jobs Management System
+# Kelompok 13 · PSO B
+#
+# Berjalan HANYA JIKA: CI Pipeline sukses pada branch main
+#
+# CATATAN WEEK 14:
+# Job deploy masih berupa mock-up (simulasi dengan echo).
+# Akan diganti dengan Azure actions sungguhan di Week 15
+# setelah infrastruktur Azure selesai diprovisioning.
+# ==============================================================
+
+name: CD Pipeline
+
+on:
+  workflow_run:
+    workflows: ["CI Pipeline"]
+    types: [completed]
+    branches: [main]
+
+jobs:
+  build:
+    name: "📦 Build Artifact"
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    steps:
+      - name: Checkout kode (Sinkronisasi Commit SHA)
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+      - name: Setup PHP 8.2
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: pdo, pdo_pgsql, mbstring, xml, curl, zip, bcmath
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - name: Cache Composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.composer/cache
+          key: ${{ runner.os }}-prod-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-prod-composer-
+      - name: Install PHP dependencies (production)
+        run: composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist
+      - name: Install Node dependencies
+        run: npm ci
+      - name: Build frontend assets (Vite + Tailwind CSS)
+        run: npm run build
+      - name: Package aplikasi menjadi ZIP
+        run: |
+          zip -r deployment.zip . \
+            --exclude "*.git*" \
+            --exclude "*node_modules*" \
+            --exclude "*tests*" \
+            --exclude "*.env*" \
+            --exclude "*/.github/*"
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: laravel-app-${{ github.sha }}
+          path: deployment.zip
+          retention-days: 7
+
+  deploy:
+    name: "🚀 Deploy to Production (Mock-up)"
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: laravel-app-${{ github.sha }}
+      - name: "[MOCK-UP] Azure Login"
+        run: |
+          echo "========================================"
+          echo "  SIMULASI: Login ke Azure"
+          echo "========================================"
+          echo "→ Menggunakan: secrets.AZURE_CREDENTIALS"
+          echo "→ Action nyata (Week 15): azure/login@v2"
+          echo "→ Status: ✅ Simulasi login berhasil"
+      - name: "[MOCK-UP] Deploy ke Azure App Service"
+        run: |
+          echo "========================================"
+          echo "  SIMULASI: Zip Deploy ke Azure"
+          echo "========================================"
+          echo "→ File: deployment.zip"
+          echo "→ Target App: secrets.AZURE_APP_NAME"
+          echo "→ Action nyata (Week 15): azure/webapps-deploy@v3"
+          echo "→ Status: ✅ Simulasi deploy berhasil"
+      - name: "[MOCK-UP] Database Migration & Optimization"
+        run: |
+          echo "========================================"
+          echo "  SIMULASI: Remote SSH ke Azure Server"
+          echo "========================================"
+          echo "→ Command 1: php artisan migrate --force"
+          echo "→ Command 2: php artisan optimize"
+          echo "→ Action nyata (Week 15): azure/cli@v2"
+          echo "→ Status: ✅ Simulasi migrasi berhasil"
+      - name: "[MOCK-UP] Health Check"
+        run: |
+          echo "========================================"
+          echo "  SIMULASI: Health Check Endpoint"
+          echo "========================================"
+          echo "→ Target URL: https://[AZURE_APP_NAME].azurewebsites.net/up"
+          echo "→ Expected response: HTTP 200 OK"
+          echo "→ Status: ✅ Simulasi health check berhasil"
+          echo ""
+          echo "✅ CD Pipeline mock-up Week 14 selesai."
