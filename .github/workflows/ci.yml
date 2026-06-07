@@ -58,7 +58,7 @@ jobs:
   # ------------------------------------------------------------
   # JOB 2: TEST
   # Hanya jalan kalau lint lulus
-  # npm build DIHAPUS dari sini — test tidak butuh compiled assets
+  # npm build DIKEMBALIKAN — Feature test Laravel Breeze butuh manifest
   # ------------------------------------------------------------
   test:
     name: "🧪 Run Tests (PHP ${{ matrix.php-version }})"
@@ -88,8 +88,19 @@ jobs:
           key: ${{ runner.os }}-php${{ matrix.php-version }}-composer-${{ hashFiles('**/composer.lock') }}
           restore-keys: ${{ runner.os }}-php${{ matrix.php-version }}-composer-
 
-      - name: Install dependencies
+      - name: Install dependencies (PHP)
         run: composer install --no-interaction --prefer-dist --no-progress
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install Node dependencies & Build assets
+        run: |
+          npm ci
+          npm run build
 
       - name: Buat .env dari .env.example
         run: cp .env.example .env
