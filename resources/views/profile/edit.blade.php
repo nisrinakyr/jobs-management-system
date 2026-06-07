@@ -1,102 +1,43 @@
-<x-guest-layout>
-    {{-- Container --}}
-    <div class="relative w-full max-w-md mx-auto mt-20 bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950 border border-gray-800 rounded-2xl shadow-2xl p-10 space-y-8 overflow-hidden"
-         x-data="{ showPass:false, submitting:false }">
-
-        <!-- Animated Glow Background -->
-        <div class="absolute inset-0 pointer-events-none z-0">
-            <div class="absolute -top-24 -left-24 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl animate-pulse"></div>
-            <div class="absolute -bottom-24 -right-24 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl animate-pulse"></div>
-        </div>
-
-        <!-- Header -->
-        <div class="relative z-10 text-center space-y-2">
-            <h1 class="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 tracking-wide">
-                Welcome Back
-            </h1>
-            <p class="text-sm text-gray-400">
-                Log in to continue your journey with the Job Board System.
-            </p>
-        </div>
-
-        <!-- Session Status -->
-        <x-auth-session-status class="relative z-10 mb-4 text-sm text-green-500" :status="session('status')" />
-
-        <!-- Form -->
-        <form method="POST"
-              action="{{ route('login') }}"
-              class="relative z-10 space-y-6"
-              x-on:submit="submitting = true">
-            @csrf
-
-            <!-- Email Address -->
-            <div class="group">
-                <x-input-label for="email" :value="__('Email')" class="text-gray-300 group-hover:text-blue-400 transition" />
-                <x-text-input id="email"
-                              class="mt-1 block w-full rounded-lg bg-gray-900 border border-gray-700 text-gray-100 placeholder-gray-500 focus:ring-blue-500 focus:border-blue-500 transition"
-                              type="email"
-                              name="email"
-                              :value="old('email')"
-                              required
-                              autofocus
-                              autocomplete="username" />
-                <x-input-error :messages="$errors->get('email')" class="mt-2 text-sm text-red-400" />
-            </div>
-
-            <!-- Password -->
-            <div class="group">
-                <div class="flex items-center justify-between">
-                    <x-input-label for="password" :value="__('Password')" class="text-gray-300 group-hover:text-blue-400 transition" />
-                    @if (Route::has('password.request'))
-                        <a class="text-xs text-blue-400 hover:underline transition" href="{{ route('password.request') }}">
-                            {{ __('Forgot?') }}
-                        </a>
-                    @endif
+<x-app-layout>
+    <x-slot name="header">
+        <div class="rounded-xl px-4 py-3 relative overflow-hidden">
+            <div aria-hidden="true" class="pointer-events-none absolute inset-0 -z-10">
+                <div class="absolute inset-0 opacity-[0.06] [mask-image:radial-gradient(60%_60%_at_50%_0%,black,transparent)]">
+                    <div class="absolute inset-0 [background-image:linear-gradient(to_right,rgba(0,0,0,.12)_1px,transparent_1px),linear-gradient(to_bottom,rgba(0,0,0,.12)_1px,transparent_1px)] [background-size:20px_20px] dark:[background-image:linear-gradient(to_right,rgba(255,255,255,.12)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,.12)_1px,transparent_1px)]"></div>
                 </div>
+                <div class="absolute -top-10 right-0 h-40 w-40 rounded-full blur-2xl opacity-25 bg-gradient-to-tr from-slate-200 to-indigo-200 dark:from-gray-800 dark:to-indigo-900"></div>
+            </div>
 
-                <div class="relative">
-                    {{-- Use a plain input and Alpine binding to avoid Blade parsing :type --}}
-                    <input id="password"
-                           class="mt-1 block w-full rounded-lg bg-gray-900 border border-gray-700 text-gray-100 placeholder-gray-500 focus:ring-blue-500 focus:border-blue-500 transition pr-12"
-                           x-bind:type="showPass ? 'text' : 'password'"
-                           name="password"
-                           required
-                           autocomplete="current-password" />
-                    <!-- Show/Hide button -->
-                    <button type="button"
-                            x-on:click="showPass = !showPass"
-                            class="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-gray-400 hover:text-gray-200">
-                        <span x-show="!showPass">👁️</span>
-                        <span x-show="showPass">🙈</span>
-                    </button>
+            <h2 class="font-semibold text-[1.35rem] tracking-tight text-slate-800 dark:text-slate-100">
+                My Profile
+            </h2>
+        </div>
+    </x-slot>
+
+    <div class="py-8">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+
+            {{-- Bagian Update Info Profil --}}
+            <div class="p-6 sm:p-8 rounded-2xl border border-white/20 dark:border-white/10 bg-white/60 dark:bg-gray-900/30 backdrop-blur-xl shadow-[0_8px_30px_-12px_rgba(0,0,0,0.3)] ring-1 ring-black/5">
+                <div class="max-w-xl">
+                    @include('profile.partials.update-profile-information-form')
                 </div>
-                <x-input-error :messages="$errors->get('password')" class="mt-2 text-sm text-red-400" />
             </div>
 
-            <!-- Remember Me -->
-            <div class="flex items-center justify-between">
-                <label for="remember_me" class="inline-flex items-center">
-                    <input id="remember_me" type="checkbox"
-                           class="rounded dark:bg-gray-900 border-gray-300 dark:border-gray-700 text-indigo-600 shadow-sm focus:ring-blue-500 dark:focus:ring-blue-600 dark:focus:ring-offset-gray-800"
-                           name="remember">
-                    <span class="ms-2 text-sm text-gray-400">{{ __('Remember me') }}</span>
-                </label>
+            {{-- Bagian Update Password --}}
+            <div class="p-6 sm:p-8 rounded-2xl border border-white/20 dark:border-white/10 bg-white/60 dark:bg-gray-900/30 backdrop-blur-xl shadow-[0_8px_30px_-12px_rgba(0,0,0,0.3)] ring-1 ring-black/5">
+                <div class="max-w-xl">
+                    @include('profile.partials.update-password-form')
+                </div>
             </div>
 
-            <!-- Submit Button -->
-            <div class="flex justify-end">
-                <x-primary-button type="submit"
-                    class="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6 py-2 rounded-full shadow-md transition disabled:opacity-60 disabled:cursor-not-allowed"
-                    x-bind:disabled="submitting">
-                    <span x-show="!submitting">{{ __('Log in') }}</span>
-                    <span x-show="submitting">⏳ Logging in…</span>
-                </x-primary-button>
+            {{-- Bagian Hapus Akun --}}
+            <div class="p-6 sm:p-8 rounded-2xl border border-white/20 dark:border-white/10 bg-white/60 dark:bg-gray-900/30 backdrop-blur-xl shadow-[0_8px_30px_-12px_rgba(0,0,0,0.3)] ring-1 ring-black/5">
+                <div class="max-w-xl">
+                    @include('profile.partials.delete-user-form')
+                </div>
             </div>
-        </form>
 
-        <!-- Minimal Alpine.js fallback (only if not already loaded elsewhere) -->
-        <script>
-            window.Alpine || document.write('<script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer><\/script>');
-        </script>
+        </div>
     </div>
-</x-guest-layout>
+</x-app-layout>
