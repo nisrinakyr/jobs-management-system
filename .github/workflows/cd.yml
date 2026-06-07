@@ -107,7 +107,7 @@ jobs:
           echo "Menjalankan php artisan migrate via Kudu REST API..."
           curl -X POST \
             "https://jobs-kelompok13-adeudzgqhjddhmb5.scm.southeastasia-01.azurewebsites.net/api/command" \
-            -u "${{ secrets.AZURE_KUDU_CREDENTIALS }}" \
+            -u '${{ secrets.AZURE_KUDU_CREDENTIALS }}' \
             -H "Content-Type: application/json" \
             -d '{"command":"php artisan migrate --force","dir":"site\\wwwroot"}' \
             --fail \
@@ -119,7 +119,7 @@ jobs:
           echo "Menjalankan php artisan optimize..."
           curl -X POST \
             "https://jobs-kelompok13-adeudzgqhjddhmb5.scm.southeastasia-01.azurewebsites.net/api/command" \
-            -u "${{ secrets.AZURE_KUDU_CREDENTIALS }}" \
+            -u '${{ secrets.AZURE_KUDU_CREDENTIALS }}' \
             -H "Content-Type: application/json" \
             -d '{"command":"php artisan optimize","dir":"site\\wwwroot"}' \
             --fail \
