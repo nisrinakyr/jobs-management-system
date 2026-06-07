@@ -16,6 +16,8 @@ class Job extends Model
         'title',
         'description',
         'location',
+        'work_mode',
+        'currency',
         'salary',
         'employment_type',
         'experience_level',

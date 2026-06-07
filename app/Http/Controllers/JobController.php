@@ -73,6 +73,8 @@ class JobController extends Controller
             'title'            => 'required|string|max:255',
             'description'      => 'nullable|string',
             'location'         => 'required|string|max:255',
+            'work_mode'        => 'required|in:on-site,hybrid,remote',
+            'currency'         => 'required|in:IDR,USD,SGD,EUR',
             'salary'           => 'nullable|numeric',
             'employment_type'  => 'required|in:full-time,part-time,contract,freelance',
             'experience_level' => 'nullable|string|max:100',
