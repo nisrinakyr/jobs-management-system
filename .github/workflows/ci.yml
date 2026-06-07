@@ -132,4 +132,4 @@ jobs:
 
       # Menggunakan || true agar laporan CVE tetap keluar di log tapi status job dipaksa sukses (hijau)
       - name: Jalankan composer audit
-        run: composer audit || true
+        run: composer audit
