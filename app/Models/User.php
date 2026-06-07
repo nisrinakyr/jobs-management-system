@@ -44,4 +44,9 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function bookmarkedJobs()
+    {
+        return $this->belongsToMany(Job::class, 'bookmarks', 'user_id', 'job_listing_id')->withTimestamps();
+    }
 }

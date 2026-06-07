@@ -14,10 +14,19 @@ class ProfileController extends Controller
     /**
      * Display the user's profile form.
      */
+    /**
+     * Display the user's profile form.
+     */
     public function edit(Request $request): View
     {
+        $user = $request->user();
+
+        // Mengambil data lowongan yang di-bookmark oleh user ini
+        $bookmarkedJobs = $user->bookmarkedJobs()->latest()->get();
+
         return view('profile.edit', [
-            'user' => $request->user(),
+            'user' => $user,
+            'bookmarkedJobs' => $bookmarkedJobs, // Dikirim ke blade
         ]);
     }
 
