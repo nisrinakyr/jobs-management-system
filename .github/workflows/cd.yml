@@ -131,6 +131,6 @@ jobs:
           echo "Menunggu App Service menyerap deployment baru..."
           sleep 60
           curl --fail --retry 5 --retry-delay 15 \
-            https://jobs-kelompok13-adeudzgqhjddhmb5.southeastasia-01.azurewebsites.net/up\
+            https://jobs-kelompok13-adeudzgqhjddhmb5.southeastasia-01.azurewebsites.net/ \
             && echo "✅ Deployment berhasil, aplikasi berjalan normal." \
             || (echo "❌ Health check gagal!" && exit 1)
