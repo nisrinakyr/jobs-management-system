@@ -62,6 +62,16 @@ jobs:
       - name: Build frontend assets (Vite + Tailwind)
         run: npm run build
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      - name: Install NPM and Build CSS/JS
+        run: |
+          npm install
+          npm run build
+
       - name: Package aplikasi menjadi ZIP
         run: |
           zip -r deployment.zip . \
