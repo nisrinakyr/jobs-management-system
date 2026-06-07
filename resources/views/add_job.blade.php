@@ -69,10 +69,31 @@
                                     name="location"
                                     value="{{ old('location') }}"
                                     required
-                                    placeholder="e.g., Singapore • Remote OK"
+                                    placeholder="e.g., Singapore"
                                     class="mt-1 w-full rounded-lg bg-white/70 dark:bg-gray-800/40 border border-white/30 dark:border-white/10 px-3 py-2.5 text-gray-900 dark:text-gray-100 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/70 transition"
                                 />
                                 @error('location')
+                                    <p class="mt-1 text-sm text-rose-600">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            {{-- Work Mode --}}
+                            <div>
+                                <label for="work_mode" class="block text-sm font-medium text-slate-800 dark:text-slate-200">
+                                    Work Mode <span class="text-rose-500">*</span>
+                                </label>
+                                <select
+                                    id="work_mode"
+                                    name="work_mode"
+                                    required
+                                    class="mt-1 w-full rounded-lg bg-white/70 dark:bg-gray-800/40 border border-white/30 dark:border-white/10 px-3 py-2.5 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500/70 transition"
+                                >
+                                    <option value="" disabled @selected(!old('work_mode'))>Select work mode</option>
+                                    <option value="on-site" @selected(old('work_mode') === 'on-site')>On-site</option>
+                                    <option value="hybrid" @selected(old('work_mode') === 'hybrid')>Hybrid</option>
+                                    <option value="remote" @selected(old('work_mode') === 'remote')>Remote</option>
+                                </select>
+                                @error('work_mode')
                                     <p class="mt-1 text-sm text-rose-600">{{ $message }}</p>
                                 @enderror
                             </div>
@@ -102,24 +123,37 @@
                                 <label for="salary" class="block text-sm font-medium text-slate-800 dark:text-slate-200">
                                     Salary (optional)
                                 </label>
-                                <div class="mt-1 relative">
-                                    <input
-                                        id="salary"
-                                        type="number"
-                                        step="0.01"
-                                        name="salary"
-                                        value="{{ old('salary') }}"
-                                        placeholder="e.g., 6500"
-                                        class="w-full rounded-lg bg-white/70 dark:bg-gray-800/40 border border-white/30 dark:border-white/10 px-3 py-2.5 text-gray-900 dark:text-gray-100 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/70 transition"
-                                    />
-                                    <span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-500">/month</span>
+                                <div class="mt-1 flex rounded-lg shadow-sm">
+                                    <select
+                                        id="currency"
+                                        name="currency"
+                                        class="w-1/3 min-w-[80px] rounded-l-lg bg-white/70 dark:bg-gray-800/40 border border-r-0 border-white/30 dark:border-white/10 pl-3 pr-8 py-2.5 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500/70 transition"
+                                    >
+                                        <option value="IDR" @selected(old('currency', 'IDR') === 'IDR')>IDR</option>
+                                        <option value="USD" @selected(old('currency') === 'USD')>USD</option>
+                                        <option value="SGD" @selected(old('currency') === 'SGD')>SGD</option>
+                                        <option value="EUR" @selected(old('currency') === 'EUR')>EUR</option>
+                                    </select>
+                                    <div class="relative flex-grow">
+                                        <input
+                                            id="salary"
+                                            type="number"
+                                            step="0.01"
+                                            name="salary"
+                                            value="{{ old('salary') }}"
+                                            placeholder="e.g., 6500"
+                                            class="w-full rounded-r-lg bg-white/70 dark:bg-gray-800/40 border border-white/30 dark:border-white/10 px-3 py-2.5 text-gray-900 dark:text-gray-100 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/70 transition"
+                                        />
+                                        <span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-500">/month</span>
+                                    </div>
                                 </div>
+                                @error('currency')
+                                    <p class="mt-1 text-sm text-rose-600">{{ $message }}</p>
+                                @enderror
                                 @error('salary')
                                     <p class="mt-1 text-sm text-rose-600">{{ $message }}</p>
                                 @enderror
                             </div>
-                        </div>
-                    </div>
 
                     {{-- Experience --}}
                     <div>
