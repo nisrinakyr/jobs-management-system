@@ -139,4 +139,15 @@ class JobController extends Controller
         $job = Job::findOrFail($id);
         return view('job_show', compact('job'));
     }
+
+    public function toggleBookmark($id)
+    {
+        $job = \App\Models\Job::findOrFail($id);
+
+        // Fungsi toggle ini otomatis nambahin data kalau belum dibookmark,
+        // dan otomatis ngehapus kalau sebelumnya udah dibookmark
+        auth()->user()->bookmarkedJobs()->toggle($job->id);
+
+        return back();
+    }
 }
