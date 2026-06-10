@@ -22,4 +22,9 @@ class Job extends Model
         'employment_type',
         'experience_level',
     ];
+
+    public function bookmarkedBy()
+    {
+        return $this->belongsToMany(User::class, 'bookmarks', 'job_listing_id', 'user_id')->withTimestamps();
+    }
 }

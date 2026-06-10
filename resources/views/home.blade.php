@@ -181,25 +181,42 @@
                                             </div>
                                         </dl>
 
-                                        {{-- Actions --}}
-                                        <div class="mt-5 flex items-center justify-between">
-                                            <a href="{{ route('jobs.edit', $job->id) }}"
-                                               onclick="event.stopPropagation();"
-                                               class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium text-white bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-purple-500 transition">
-                                                ✏️ Edit
-                                            </a>
+                                        {{-- Actions & Bookmark --}}
+                                        <div class="mt-5 flex items-center justify-between gap-2">
+                                            <div class="flex gap-2">
+                                                <a href="{{ route('jobs.edit', $job->id) }}"
+                                                onclick="event.stopPropagation();"
+                                                class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium text-white bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 transition">
+                                                    ✏️ Edit
+                                                </a>
 
-                                            <form action="{{ route('jobs.destroy', $job->id) }}" method="POST" class="m-0" onsubmit="event.stopPropagation(); return confirm('Delete this job?');">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit"
-                                                        onclick="event.stopPropagation();"
-                                                        class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium text-white bg-gradient-to-r from-rose-600 to-pink-600 hover:from-rose-700 hover:to-pink-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-rose-500 transition">
-                                                    🗑️ Delete
-                                                </button>
-                                            </form>
+                                                <form action="{{ route('jobs.destroy', $job->id) }}" method="POST" class="m-0" onsubmit="event.stopPropagation(); return confirm('Delete this job?');">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit"
+                                                            onclick="event.stopPropagation();"
+                                                            class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium text-white bg-gradient-to-r from-rose-600 to-pink-600 hover:from-rose-700 hover:to-pink-700 transition">
+                                                        🗑️
+                                                    </button>
+                                                </form>
+                                            </div>
+
+                                            {{-- Form Tombol Bookmark --}}
+                                            @auth
+                                                @php
+                                                    $isBookmarked = auth()->user()->bookmarkedJobs->contains($job->id);
+                                                @endphp
+                                                <form action="{{ route('jobs.bookmark', $job->id) }}" method="POST" class="m-0" onsubmit="event.stopPropagation();">
+                                                    @csrf
+                                                    <button type="submit"
+                                                            onclick="event.stopPropagation();"
+                                                            class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium transition
+                                                            {{ $isBookmarked ? 'bg-amber-100 text-amber-700 border border-amber-300 dark:bg-amber-500/20 dark:text-amber-300 dark:border-amber-500/30' : 'bg-gray-100 text-gray-700 border border-gray-300 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-700 dark:hover:bg-gray-700' }}">
+                                                        {{ $isBookmarked ? '⭐ Saved' : '☆ Save' }}
+                                                    </button>
+                                                </form>
+                                            @endauth
                                         </div>
-                                    </div>
 
                                     {{-- soft spotlight on hover --}}
                                     <div class="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition
