@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Welcome</title>
+  <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">
 
   {{-- Tailwind CDN (great for dev; switch to compiled Tailwind in prod) --}}
   <script src="https://cdn.tailwindcss.com"></script>
