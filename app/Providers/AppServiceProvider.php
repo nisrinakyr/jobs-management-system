@@ -19,6 +19,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //\Illuminate\Support\Facades\URL::forceScheme('https');
+       // Memaksa HTTPS jika mendeteksi domain Azure atau di environment production
+        if (config('app.env') === 'production' || str_contains(config('app.url'), 'azurewebsites')) {
+            URL::forceScheme('https');
+        }
     }
 }
