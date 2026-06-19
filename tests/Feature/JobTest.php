@@ -1,14 +1,35 @@
 <?php
 
 use App\Models\User;
+use App\Models\Job;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
-test('halaman daftar lowongan bisa diakses dengan aman', function () {
-    // 1. Bikin 1 user dummy agar melewati proteksi login (jika ada)
+uses(RefreshDatabase::class);
+
+test('halaman daftar lowongan bisa diakses', function () {
     $user = User::factory()->create();
-
-    // 2. Akses halamannya menggunakan rute asli dari web.php kamu
     $response = $this->actingAs($user)->get('/showingjobspage');
-
-    // 3. Pastikan halamannya merespons dengan sukses (HTTP 200 OK)
     $response->assertStatus(200);
+});
+
+test('user bisa menyimpan lowongan baru', function () {
+    $user = User::factory()->create();
+    $response = $this->actingAs($user)->post('/jobs', [
+        'title' => 'Software Engineer',
+        'description' => 'Lowongan testing',
+        'company' => 'Tech Corp'
+    ]);
+
+    $response->assertStatus(302);
+    $this->assertDatabaseHas('jobs', ['title' => 'Software Engineer']);
+});
+
+test('user bisa menghapus lowongan', function () {
+    $user = User::factory()->create();
+    $job = Job::factory()->create();
+
+    $response = $this->actingAs($user)->delete("/jobs/{$job->id}");
+
+    $response->assertStatus(302);
+    $this->assertDatabaseMissing('jobs', ['id' => $job->id]);
 });
