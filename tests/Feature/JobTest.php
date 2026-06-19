@@ -12,7 +12,25 @@ test('halaman daftar lowongan bisa diakses', function () {
     $response->assertStatus(200);
 });
 
-test('user bisa mencoba menyimpan lowongan baru', function () {
+test('user bisa melihat detail lowongan (show)', function () {
+    $user = User::factory()->create();
+    $job = Job::factory()->create();
+
+    $response = $this->actingAs($user)->get("/jobs/{$job->id}");
+
+    // assertSuccessful mentoleransi status 200 OK
+    $response->assertSuccessful();
+});
+
+test('user bisa membuka halaman edit lowongan', function () {
+    $user = User::factory()->create();
+    $job = Job::factory()->create();
+
+    $response = $this->actingAs($user)->get("/jobs/{$job->id}/edit");
+    $response->assertSuccessful();
+});
+
+test('user bisa mencoba menyimpan lowongan baru (store)', function () {
     $user = User::factory()->create();
     $response = $this->actingAs($user)->post('/jobs', [
         'title' => 'Software Engineer',
@@ -20,16 +38,26 @@ test('user bisa mencoba menyimpan lowongan baru', function () {
         'company' => 'Tech Corp'
     ]);
 
-    // Cukup pastikan rute bisa diakses dan mengembalikan status redirect (302)
     $response->assertStatus(302);
 });
 
-test('user bisa mencoba menghapus lowongan', function () {
+test('user bisa mencoba mengubah lowongan (update)', function () {
+    $user = User::factory()->create();
+    $job = Job::factory()->create();
+
+    $response = $this->actingAs($user)->put("/jobs/{$job->id}", [
+        'title' => 'Updated Title',
+        'description' => 'Updated description',
+        'company' => 'Updated Company'
+    ]);
+
+    $response->assertStatus(302);
+});
+
+test('user bisa mencoba menghapus lowongan (destroy)', function () {
     $user = User::factory()->create();
     $job = Job::factory()->create();
 
     $response = $this->actingAs($user)->delete("/jobs/{$job->id}");
-
-    // Cukup pastikan rute delete bisa diakses tanpa error fatal
     $response->assertStatus(302);
 });
