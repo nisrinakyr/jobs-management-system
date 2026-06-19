@@ -196,7 +196,7 @@
                                                     <button type="submit"
                                                             onclick="event.stopPropagation();"
                                                             class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium text-white bg-gradient-to-r from-rose-600 to-pink-600 hover:from-rose-700 hover:to-pink-700 transition">
-                                                        🗑️
+                                                        🗑️ 
                                                     </button>
                                                 </form>
                                             </div>
