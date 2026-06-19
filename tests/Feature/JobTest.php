@@ -61,3 +61,11 @@ test('user bisa mencoba menghapus lowongan (destroy)', function () {
     $response = $this->actingAs($user)->delete("/jobs/{$job->id}");
     $response->assertStatus(302);
 });
+
+test('model job memiliki relasi bookmarkedBy', function () {
+    $job = new Job(); 
+
+    // Karena di folder Feature, koneksi database sudah menyala, ini tidak akan error
+    expect($job->bookmarkedBy())->toBeInstanceOf(\Illuminate\Database\Eloquent\Relations\BelongsToMany::class);
+    expect($job->getFillable())->toBeArray();
+});
