@@ -1,13 +1,15 @@
 <?php
 
 use App\Models\Job;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
-test('model job dapat diinisialisasi dan mengecek fillable', function () {
+test('model job memiliki relasi bookmarkedBy dan fillable yang benar', function () {
+    // 1. Inisialisasi model
     $job = new Job();
 
-    // Mengecek apakah file model benar-benar ada dan bisa dipanggil
-    expect($job)->toBeInstanceOf(Job::class);
+    // 2. Panggil fungsi bookmarkedBy() agar dieksekusi dan dihitung coverage
+    expect($job->bookmarkedBy())->toBeInstanceOf(BelongsToMany::class);
 
-    // Mengecek apakah pengaturan array fillable di dalamnya terbaca
+    // 3. Pastikan array fillable terbaca
     expect($job->getFillable())->toBeArray();
 });
